@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inter × Noto Sans JP 混植デモ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+<!-- Gen Interface JP（Inter + Noto Sans JP を統合した単一書体）: jsDelivr から weight ごとに読み込む -->
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gen-interface-jp@latest/cdn/400.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gen-interface-jp@latest/cdn/500.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gen-interface-jp@latest/cdn/600.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gen-interface-jp@latest/cdn/700.css">
+<style>
+:root {
+  /* Inter を先、Noto Sans JP を後に置くのが混植の肝 */
+  --font-mix: "Inter", "Noto Sans JP", sans-serif;
+  --font-jp-only: "Noto Sans JP", sans-serif;
+  --font-gen: "Gen Interface JP", sans-serif; /* Inter + Noto を1書体に統合済み */
+
+  --c-ink: #1f2328;
+  --c-sub: #6b7280;
+  --c-line: #e5e7eb;
+  --c-accent: #4c6ef5;
+  --c-latin: #e7f0ff;
+  --c-jp: #fdeede;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-mix);
+  color: var(--c-ink);
+  background: #f7f8fa;
+  line-height: 1.8;
+  padding-block: 56px;
+  padding-inline: 24px;
+  -webkit-font-smoothing: antialiased;
+}
+
+.wrap { max-inline-size: 760px; margin-inline: auto; }
+
+.pageTitle {
+  font-size: clamp(28px, 5vw, 44px);
+  font-weight: 700;
+  letter-spacing: .01em;
+  margin-block-end: 6px;
+}
+.pageLead {
+  color: var(--c-sub);
+  margin-block-end: 40px;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid var(--c-line);
+  border-radius: 14px;
+  padding: 28px 30px;
+  margin-block-end: 24px;
+}
+.card__label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--c-accent);
+  margin-block-end: 14px;
+}
+
+/* 大きめの見出しサンプル */
+.sample {
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.sample--big { font-size: clamp(26px, 4.5vw, 40px); font-weight: 700; }
+
+/* 振り分けの可視化：ラテンと日本語で背景色を変える */
+.latin { background: var(--c-latin); border-radius: 4px; padding-inline: 3px; }
+.jp    { background: var(--c-jp);    border-radius: 4px; padding-inline: 3px; }
+
+/* ウェイト比較テーブル */
+.weights { display: grid; gap: 14px; }
+.weightRow {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 16px;
+  align-items: baseline;
+  padding-block-end: 14px;
+  border-block-end: 1px solid var(--c-line);
+}
+.weightRow:last-child { border-block-end: none; padding-block-end: 0; }
+.weightRow__num { font-size: 13px; color: var(--c-sub); font-variant-numeric: tabular-nums; }
+.weightRow__text { font-size: 22px; }
+.w400 { font-weight: 400; }
+.w500 { font-weight: 500; }
+.w600 { font-weight: 600; }
+.w700 { font-weight: 700; }
+
+/* 約物（記号）サンプル */
+.punct { font-size: 22px; }
+
+/* 比較：混植 vs 日本語フォントのみ */
+.compare { display: grid; gap: 18px; }
+@media (min-width: 560px) { .compare { grid-template-columns: repeat(3, 1fr); } }
+.compareCol h3 {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--c-sub);
+  margin-block-end: 8px;
+}
+.compareCol p { font-size: 20px; line-height: 1.6; }
+.compareCol--mix p  { font-family: var(--font-mix); }
+.compareCol--jp  p  { font-family: var(--font-jp-only); }
+.compareCol--gen p  { font-family: var(--font-gen); }
+
+/* font-size-adjust トグルの対象 */
+.adjustTarget { font-size: 24px; line-height: 1.7; }
+.adjustTarget.is-adjusted { font-size-adjust: 0.52; } /* 日本語基準に英数字の見かけを寄せる */
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-block-end: 16px;
+  font-size: 14px;
+  color: var(--c-sub);
+  cursor: pointer;
+  user-select: none;
+}
+
+.legend {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: var(--c-sub);
+  margin-block-end: 24px;
+}
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.swatch { inline-size: 14px; block-size: 14px; border-radius: 3px; }
+.swatch--latin { background: var(--c-latin); }
+.swatch--jp { background: var(--c-jp); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1 class="pageTitle">Inter × Noto Sans JP</h1>
+  <p class="pageLead">英数字は Inter、日本語は Noto Sans JP に自動で振り分けられます。ページ下部には、両者を統合した単一書体 Gen Interface JP のパターンも追加しています。</p>
+
+  <div class="legend">
+    <span><i class="swatch swatch--latin"></i> Inter（ラテン）</span>
+    <span><i class="swatch swatch--jp"></i> Noto Sans JP（日本語）</span>
+  </div>
+
+  <!-- 1. 自動振り分け -->
+  <div class="card">
+    <p class="card__label">自動振り分け</p>
+    <p class="sample sample--big">
+      <span class="jp">私たちは</span><span class="latin">2026</span><span class="jp">年に</span><span class="latin">Web</span><span class="jp">サイトを</span><span class="latin">Renewal</span><span class="jp">します。</span>
+    </p>
+    <p style="margin-block-start:14px; color:var(--c-sub); font-size:14px;">
+      背景色は説明用に付けています。実際のマークアップは <code>&lt;span&gt;</code> で囲む必要はなく、地の文のままで振り分けられます。
+    </p>
+  </div>
+
+  <!-- 2. マークアップなしの地の文 -->
+  <div class="card">
+    <p class="card__label">地の文（囲みなし）</p>
+    <p class="sample">
+      デザインは Simple かつ Functional に。UI/UX の品質を 100% 引き上げ、2026 年 4 月にローンチ予定です。
+    </p>
+  </div>
+
+  <!-- 3. ウェイト比較 -->
+  <div class="card">
+    <p class="card__label">ウェイト比較（同じ数値でも印象が異なる）</p>
+    <div class="weights">
+      <div class="weightRow">
+        <span class="weightRow__num">400</span>
+        <span class="weightRow__text w400">Design システム Regular 400</span>
+      </div>
+      <div class="weightRow">
+        <span class="weightRow__num">500</span>
+        <span class="weightRow__text w500">Design システム Medium 500</span>
+      </div>
+      <div class="weightRow">
+        <span class="weightRow__num">600</span>
+        <span class="weightRow__text w600">Design システム SemiBold 600</span>
+      </div>
+      <div class="weightRow">
+        <span class="weightRow__num">700</span>
+        <span class="weightRow__text w700">Design システム Bold 700</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. 約物 -->
+  <div class="card">
+    <p class="card__label">約物（記号・括弧）の見え方</p>
+    <p class="punct">「混植」について——括弧（かっこ）、句読点、や中黒・ダッシュ… “quotes” と Numbers 12,345 の並び。</p>
+  </div>
+
+  <!-- 5. font-size-adjust トグル -->
+  <div class="card">
+    <p class="card__label">font-size-adjust で字面を揃える</p>
+    <label class="toggle">
+      <input type="checkbox" id="adjust"> font-size-adjust を有効にする（英数字の見かけの大きさを日本語に寄せる）
+    </label>
+    <p class="adjustTarget" id="adjustTarget">
+      混植では Latin と日本語の字面サイズが違い、英数字がやや小さく見えることがあります。Adjust を ON にすると Alphabet の見かけが 日本語 に近づきます。
+    </p>
+  </div>
+
+  <!-- 追加パターン: Gen Interface JP -->
+  <div class="card" style="border-color:#d6c2f7;">
+    <p class="card__label" style="color:#7c4dff;">追加パターン：Gen Interface JP（単一書体で混植済み）</p>
+    <p style="color:var(--c-sub); font-size:14px; margin-block-end:18px;">
+      Inter と Noto Sans JP を1つの書体に統合し、和欧の見え方を最初から揃えた UI 向けフォント。<code>font-family</code> に1つ指定するだけで済みます。
+    </p>
+    <p class="sample sample--big" style="font-family:var(--font-gen);">
+      私たちは 2026 年に Web サイトを Renewal します。
+    </p>
+    <div class="weights" style="font-family:var(--font-gen); margin-block-start:22px;">
+      <div class="weightRow">
+        <span class="weightRow__num">400</span>
+        <span class="weightRow__text w400">Gen Interface JP 混植サンプル Aa 亜 2026</span>
+      </div>
+      <div class="weightRow">
+        <span class="weightRow__num">500</span>
+        <span class="weightRow__text w500">Gen Interface JP 混植サンプル Aa 亜 2026</span>
+      </div>
+      <div class="weightRow">
+        <span class="weightRow__num">600</span>
+        <span class="weightRow__text w600">Gen Interface JP 混植サンプル Aa 亜 2026</span>
+      </div>
+      <div class="weightRow">
+        <span class="weightRow__num">700</span>
+        <span class="weightRow__text w700">Gen Interface JP 混植サンプル Aa 亜 2026</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. 比較 -->
+  <div class="card">
+    <p class="card__label">3つの方法を比較</p>
+    <div class="compare">
+      <div class="compareCol compareCol--mix">
+        <h3>Inter + Noto Sans JP（混植）</h3>
+        <p>The Quick Brown Fox 2026 と日本語の混植サンプル。</p>
+      </div>
+      <div class="compareCol compareCol--jp">
+        <h3>Noto Sans JP のみ</h3>
+        <p>The Quick Brown Fox 2026 と日本語の混植サンプル。</p>
+      </div>
+      <div class="compareCol compareCol--gen">
+        <h3>Gen Interface JP</h3>
+        <p>The Quick Brown Fox 2026 と日本語の混植サンプル。</p>
+      </div>
+    </div>
+    <p style="margin-block-start:14px; color:var(--c-sub); font-size:14px;">
+      左＝英数字 Inter＋和文 Noto の手動混植、中＝英数字も Noto Sans JP、右＝Gen Interface JP（統合書体）。
+      <code>The Quick Brown Fox 2026</code> の欧文と、和文とのなじみ方の違いに注目してください。手動混植と Gen は近い見た目ですが、Gen は和欧の間隔やベースラインが調整済みです。
+    </p>
+  </div>
+
+</div>
+
+<script>
+document.getElementById('adjust').addEventListener('change', function (e) {
+  document.getElementById('adjustTarget').classList.toggle('is-adjusted', e.target.checked);
+});
+</script>
+</body>
+</html>
